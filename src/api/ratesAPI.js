@@ -4,6 +4,7 @@ import { currencies, FXRatesSourceURL } from '../commons/constants';
 class RatesAPI {
   constructor(options) {
     this.updateInterval = options.updateInterval;
+    this.errorMessage = `Can't get rates :(`;
   }
 
   subscribe = (baseCurrency, callback) => {
@@ -24,7 +25,7 @@ class RatesAPI {
     clearInterval(this.intervalId);
   }
 
-  responseHasCurrenciesRates = response => {
+  responseHasRates = response => {
     const quoteCurrencies = currencies.filter(currency => currency.name !== this.baseCurrency);
 
     return (
@@ -39,9 +40,9 @@ class RatesAPI {
   _getRates = async () => {
     try {
       const response = await axios.get(`${FXRatesSourceURL}?base=${this.baseCurrency}`);
-      return this.responseHasCurrenciesRates(response) ? response.data.rates : new Error(`Can't get rates :(`);
+      return this.responseHasRates(response) ? response.data.rates : new Error(this.errorMessage);
     } catch (error) {
-      throw new Error(`Can't get rates :(`);
+      throw new Error(this.errorMessage);
     }
   };
 }

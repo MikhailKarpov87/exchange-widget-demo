@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import RatesAPI from './api/ratesAPI';
 import { currencies } from './commons/constants';
+import { isValidValue, pocketHasEnoughtFunds, removeLeadingZero } from './commons/helpers';
 import CurrencyPanel from './components/CurrencyPanel';
 
 const pockets = currencies.reduce((pocketValues, currency) => {
@@ -29,18 +30,41 @@ class App extends Component {
     this.ratesAPI.unsubscribe();
   }
 
+  clearValues() {
+    this.setState({ values: { baseCurrency: '', quoteCurrency: '' } });
+  }
+
   handleValueChange = (currencyType, e) => {
     const { quoteCurrency, rates } = this.state;
-    const value = Number(e.target.value);
+
+    if (!isValidValue(e.target.value)) {
+      return;
+    }
+
+    const value = removeLeadingZero(e.target.value);
     const quoteCurrencyRate = rates[quoteCurrency.name];
 
     if (currencyType === 'baseCurrency') {
-      const quoteCurrencyValue = value * quoteCurrencyRate;
-      this.setState({ values: { baseCurrency: value, quoteCurrency: quoteCurrencyValue } });
+      const quoteCurrencyValue = Number(value) * quoteCurrencyRate;
+      this.setState({ values: { baseCurrency: value, quoteCurrency: quoteCurrencyValue.toFixed(2) } });
     } else {
-      const baseCurrencyValue = value * (1 / quoteCurrencyRate);
-      this.setState({ values: { baseCurrency: baseCurrencyValue, quoteCurrency: value } });
+      const baseCurrencyValue = Number(value) * (1 / quoteCurrencyRate);
+      this.setState({ values: { baseCurrency: baseCurrencyValue.toFixed(2), quoteCurrency: value } });
     }
+  };
+
+  makeExchange = () => {
+    const { values, pockets } = this.state;
+
+    if (values.baseCurrency < 0) {
+      return;
+    }
+
+    if (pocketHasEnoughtFunds(values, pockets)) {
+      return;
+    }
+
+    this.clearValues();
   };
 
   render() {
@@ -62,6 +86,8 @@ class App extends Component {
             pocketValue={pockets[baseCurrency.name]}
             handleValueChange={this.handleValueChange}
           />
+
+          <button onClick={this.makeExchange}>Exchange</button>
         </header>
       </div>
     );
