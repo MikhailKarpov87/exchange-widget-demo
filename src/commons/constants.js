@@ -4,6 +4,8 @@ export const currencies = [
   { name: 'USD', symbol: '$' },
 ];
 
+export const defaultPocketValue = 50;
+
 export const FXRatesRealSourceURL = 'https://api.exchangeratesapi.io/latest';
 
 //  Mocking real source URL for development needs

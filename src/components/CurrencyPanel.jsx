@@ -1,15 +1,15 @@
-import { FormControl, InputAdornment, InputLabel, OutlinedInput } from '@material-ui/core';
 import React from 'react';
+import { FormControl, InputAdornment, InputLabel, OutlinedInput } from '@material-ui/core';
 
 const CurrencyPanel = props => {
   const {
-    baseCurrencyPanel,
+    currencyType,
     value,
     currency: { name, symbol },
     pocketValue,
     handleValueChange,
   } = props;
-  const currencyType = baseCurrencyPanel ? 'baseCurrency' : 'quoteCurrency';
+
   return (
     <div>
       <FormControl variant='outlined'>
@@ -18,11 +18,12 @@ const CurrencyPanel = props => {
           id='currency-input'
           value={value || ''}
           onChange={e => handleValueChange(currencyType, e)}
-          startAdornment={<InputAdornment position='start'>{baseCurrencyPanel ? '-' : '+'} </InputAdornment>}
+          startAdornment={<InputAdornment position='start'>{currencyType === 'baseCurrency' ? '-' : '+'} </InputAdornment>}
           endAdornment={<InputAdornment position='end'>{symbol}</InputAdornment>}
-          labelWidth={60}
+          labelWidth={30}
         />
       </FormControl>
+
       <p>You have {`${symbol}${pocketValue}`}</p>
     </div>
   );

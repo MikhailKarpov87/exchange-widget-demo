@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { currencies, FXRatesSourceURL } from '../commons/constants';
+import { toast } from 'react-toastify';
 
-class RatesAPI {
+class RatesLoader {
   constructor(options) {
     this.updateInterval = options.updateInterval;
     this.errorMessage = `Can't get rates :(`;
@@ -42,9 +43,11 @@ class RatesAPI {
       const response = await axios.get(`${FXRatesSourceURL}?base=${this.baseCurrency}`);
       return this.responseHasRates(response) ? response.data.rates : new Error(this.errorMessage);
     } catch (error) {
+      toast.error(this.errorMessage);
+      clearInterval(this.intervalId);
       throw new Error(this.errorMessage);
     }
   };
 }
 
-export default RatesAPI;
+export default RatesLoader;
