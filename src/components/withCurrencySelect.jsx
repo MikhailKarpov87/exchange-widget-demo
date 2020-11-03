@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
+import { withStyles } from '@material-ui/styles';
+import appStyles from '../styles/app';
+import { Button } from '@material-ui/core';
+
+const SideButton = withStyles(appStyles.sideButton)(Button);
 
 const withCurrencySelect = ChildComponent =>
   class WithCurrencySelect extends Component {
@@ -41,16 +46,24 @@ const withCurrencySelect = ChildComponent =>
       const prevCurrencyName = this.getNextCurrencyName(-1);
 
       return (
-        <div style={{ display: 'flex' }}>
-          <button onClick={() => handleSelectCurrency(currencyType, prevCurrencyName)} disabled={!prevCurrencyName}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <SideButton
+            style={{ alignSelf: 'stretch' }}
+            onClick={() => handleSelectCurrency(currencyType, prevCurrencyName)}
+            disabled={!prevCurrencyName}
+          >
             <ArrowLeft />
-          </button>
+          </SideButton>
 
           <ChildComponent {...this.props} currency={currency} />
 
-          <button onClick={() => handleSelectCurrency(currencyType, nextCurrencyName)} disabled={!nextCurrencyName}>
+          <SideButton
+            style={{ alignSelf: 'stretch' }}
+            onClick={() => handleSelectCurrency(currencyType, nextCurrencyName)}
+            disabled={!nextCurrencyName}
+          >
             <ArrowRight />
-          </button>
+          </SideButton>
         </div>
       );
     }

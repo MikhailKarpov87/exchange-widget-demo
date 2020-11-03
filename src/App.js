@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import RatesLoader from './api/ratesLoader';
 import { currencies, defaultPocketValue } from './commons/constants';
 import { createCurrenciesSelectList, isValidValue, pocketHasEnoughtFunds, removeLeadingZero } from './commons/helpers';
 import CurrencyPanel from './components/CurrencyPanel';
 import 'react-toastify/dist/ReactToastify.css';
 import withCurrencySelect from './components/withCurrencySelect';
-import { MenuItem, Select } from '@material-ui/core';
 import CurrencySelect from './components/CurrencySelect';
+import { withStyles } from '@material-ui/styles';
+import appStyles from './styles/app';
+import ExchangeButton from './components/ExchangeButton';
 
 const CurrencyPanelWithSelect = withCurrencySelect(CurrencyPanel);
 
@@ -76,7 +78,7 @@ class App extends Component {
 
     if (!pocketHasEnoughtFunds(exchangeValues, pockets, baseCurrency)) {
       const basePocketAmount = `${baseCurrency.symbol}${pockets[baseCurrency.name]}`;
-      toast.error(`Not enough funds (${basePocketAmount})!`);
+      toast.error(`Not enough funds (${basePocketAmount} available)!`);
       return;
     }
 
@@ -85,10 +87,10 @@ class App extends Component {
       [quoteCurrency.name]: (Number(pockets[quoteCurrency.name]) + Number(exchangeValues.quoteCurrency)).toFixed(2),
     };
     this.setState({ pockets: { ...pockets, ...updatedPocketValues } }, this.clearValues());
-    toast.info('Exchange done!');
+    toast.success('Exchange done!');
   };
 
-  createExchangeRateLabelText = () => {
+  createInverseExchangeRateText = () => {
     const { rates, baseCurrency, quoteCurrency } = this.state;
     const inverseRate = Number(1 / rates[quoteCurrency.name]).toFixed(2);
     return `${quoteCurrency.symbol}1 = ${baseCurrency.symbol}${inverseRate}`;
@@ -101,43 +103,49 @@ class App extends Component {
 
   render() {
     const { baseCurrency, quoteCurrency, pockets, exchangeValues, rates } = this.state;
+    const { classes } = this.props;
     const currenciesSelectList = createCurrenciesSelectList(currencies, rates, baseCurrency);
 
     return (
-      <div>
+      <div className={classes.appContainer}>
         <CurrencySelect
           options={currenciesSelectList}
           handleSelectCurrency={this.handleSelectCurrency}
           value={quoteCurrency.name}
         />
 
-        <CurrencyPanelWithSelect
-          currencyType='baseCurrency'
-          baseCurrency={baseCurrency}
-          quoteCurrency={quoteCurrency}
-          currenciesList={currencies}
-          value={exchangeValues.baseCurrency}
-          pocketValue={pockets[baseCurrency.name]}
-          handleValueChange={this.handleValueChange}
-          handleSelectCurrency={this.handleSelectCurrency}
-        />
+        <div className={classes.topPanel}>
+          <CurrencyPanelWithSelect
+            currencyType='baseCurrency'
+            baseCurrency={baseCurrency}
+            quoteCurrency={quoteCurrency}
+            currenciesList={currencies}
+            value={exchangeValues.baseCurrency}
+            pocketValue={pockets[baseCurrency.name]}
+            handleValueChange={this.handleValueChange}
+            handleSelectCurrency={this.handleSelectCurrency}
+          />
+        </div>
 
-        <CurrencyPanelWithSelect
-          currencyType='quoteCurrency'
-          baseCurrency={baseCurrency}
-          quoteCurrency={quoteCurrency}
-          currenciesList={currencies}
-          value={exchangeValues.quoteCurrency}
-          pocketValue={pockets[quoteCurrency.name]}
-          handleValueChange={this.handleValueChange}
-          handleSelectCurrency={this.handleSelectCurrency}
-        />
-        <div>{this.createExchangeRateLabelText()}</div>
-        <button onClick={this.makeExchange}>Exchange</button>
-        <ToastContainer position='bottom-center' autoClose={5000} hideProgressBar={true} closeOnClick pauseOnHover />
+        <div className={classes.bottomPanel}>
+          <CurrencyPanelWithSelect
+            currencyType='quoteCurrency'
+            baseCurrency={baseCurrency}
+            quoteCurrency={quoteCurrency}
+            currenciesList={currencies}
+            value={exchangeValues.quoteCurrency}
+            pocketValue={pockets[quoteCurrency.name]}
+            handleValueChange={this.handleValueChange}
+            handleSelectCurrency={this.handleSelectCurrency}
+            currencyRateText={this.createInverseExchangeRateText()}
+          />
+        </div>
+        <div className={classes.buttonContainer}>
+          <ExchangeButton handleButtonClick={this.makeExchange} />
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+export default withStyles(appStyles)(App);

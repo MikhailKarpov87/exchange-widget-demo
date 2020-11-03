@@ -1,5 +1,9 @@
 import React from 'react';
 import { FormControl, InputAdornment, InputLabel, OutlinedInput } from '@material-ui/core';
+import { currencyPanelInput, currencyPanelStyles } from '../styles/currencyPanel';
+import { withStyles } from '@material-ui/styles';
+
+const InputComponent = withStyles(currencyPanelInput)(OutlinedInput);
 
 const CurrencyPanel = props => {
   const {
@@ -8,13 +12,17 @@ const CurrencyPanel = props => {
     currency: { name, symbol },
     pocketValue,
     handleValueChange,
+    currencyRateText,
+    classes,
   } = props;
 
   return (
     <div>
       <FormControl variant='outlined'>
-        <InputLabel htmlFor='currency-input'>{name}</InputLabel>
-        <OutlinedInput
+        <InputLabel htmlFor='currency-input' className={classes.inputLabel}>
+          {name}
+        </InputLabel>
+        <InputComponent
           id='currency-input'
           value={value || ''}
           onChange={e => handleValueChange(currencyType, e)}
@@ -24,9 +32,12 @@ const CurrencyPanel = props => {
         />
       </FormControl>
 
-      <p>You have {`${symbol}${pocketValue}`}</p>
+      <div className={classes.panelText}>
+        <span>You have {`${symbol}${pocketValue}`}</span>
+        <span>{currencyRateText}</span>
+      </div>
     </div>
   );
 };
 
-export default CurrencyPanel;
+export default withStyles(currencyPanelStyles)(CurrencyPanel);

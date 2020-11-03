@@ -1,20 +1,24 @@
 import React from 'react';
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { FormControl, MenuItem, Select } from '@material-ui/core';
+import { withStyles } from '@material-ui/styles';
+import { currencySelect, currencySelectStyles } from '../styles/currencySelect';
+
+const SelectComponent = withStyles(currencySelect)(Select);
 
 const CurrencySelect = props => {
-  const { options, handleSelectCurrency, value } = props;
+  const { options, handleSelectCurrency, value, classes } = props;
 
   return (
-    <div>
+    <div className={classes.selectContainer}>
       <FormControl variant='outlined'>
-        <Select id='currency-select' value={value} onChange={e => handleSelectCurrency('quoteCurrency', e.target.value)}>
+        <SelectComponent id='currency-select' value={value} onChange={e => handleSelectCurrency('quoteCurrency', e.target.value)}>
           {options.map(({ id, name }) => (
             <MenuItem value={id}>{name}</MenuItem>
           ))}
-        </Select>
+        </SelectComponent>
       </FormControl>
     </div>
   );
 };
 
-export default CurrencySelect;
+export default withStyles(currencySelectStyles)(CurrencySelect);
