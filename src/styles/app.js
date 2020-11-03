@@ -10,9 +10,6 @@ const appStyles = {
     minWidth: '375px',
   },
   sideButton: {
-    backgroundColor: 'unset',
-    border: 0,
-    cursor: 'pointer',
     root: {
       color: colors.primaryColor,
       '&:disabled': {

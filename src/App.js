@@ -30,7 +30,16 @@ class App extends Component {
   componentDidMount() {
     const { baseCurrency } = this.state;
 
-    this.ratesLoader = new RatesLoader({ updateInterval: 5000 });
+    this.ratesLoader = new RatesLoader({ updateInterval: 10000 });
+    this.subscribeForRates(baseCurrency);
+  }
+
+  componentWillUnmount() {
+    this.ratesLoader.unsubscribe();
+  }
+
+  subscribeForRates = baseCurrency => {
+    this.ratesLoader && this.ratesLoader.unsubscribe();
     this.ratesLoader.subscribe(baseCurrency.name, updatedRates => {
       const { quoteCurrency, exchangeValues } = this.state;
       const quoteCurrencyRate = updatedRates[quoteCurrency.name];
@@ -39,20 +48,21 @@ class App extends Component {
         : '';
       this.setState({ rates: updatedRates, exchangeValues: { ...exchangeValues, quoteCurrency: updatedQuoteCurrencyValue } });
     });
-  }
+  };
 
-  componentWillUnmount() {
-    this.ratesLoader.unsubscribe();
-  }
-
-  handleValueChange = (currencyType, e) => {
+  handleValueChange = (currencyType, newValue) => {
     const { quoteCurrency, rates } = this.state;
 
-    if (!isValidValue(e.target.value)) {
+    if (!isValidValue(newValue)) {
       return;
     }
 
-    const value = removeLeadingZero(e.target.value);
+    if (newValue === '') {
+      this.clearValues();
+      return;
+    }
+
+    const value = removeLeadingZero(newValue);
     const quoteCurrencyRate = rates[quoteCurrency.name];
 
     if (currencyType === 'baseCurrency') {
@@ -98,7 +108,11 @@ class App extends Component {
 
   handleSelectCurrency = (currencyType, currencyName) => {
     const selectedCurrency = currencies.find(({ name }) => currencyName === name);
-    this.setState({ [currencyType]: selectedCurrency });
+    if (currencyType === 'baseCurrency') {
+      this.subscribeForRates(selectedCurrency);
+    }
+
+    this.setState({ [currencyType]: selectedCurrency }, () => this.handleValueChange(currencyType, this.state[currencyType]));
   };
 
   render() {

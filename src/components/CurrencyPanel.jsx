@@ -25,7 +25,7 @@ const CurrencyPanel = props => {
         <InputComponent
           id='currency-input'
           value={value || ''}
-          onChange={e => handleValueChange(currencyType, e)}
+          onChange={e => handleValueChange(currencyType, e.target.value)}
           startAdornment={<InputAdornment position='start'>{currencyType === 'baseCurrency' ? '-' : '+'} </InputAdornment>}
           endAdornment={<InputAdornment position='end'>{symbol}</InputAdornment>}
           labelWidth={30}
