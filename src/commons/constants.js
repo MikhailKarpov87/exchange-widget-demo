@@ -6,7 +6,7 @@ export const currencies = [
 
 export const defaultPocketValue = 50;
 
-export const FXRatesRealSourceURL = 'https://api.exchangeratesapi.io/latest';
+//  30 sec loading interval to avoid rate limiting from FX Rates Service
+export const defaultRatesLoadingInterval = 30 * 1000;
 
-//  Mocking real source URL for development needs
-export const FXRatesSourceURL = 'https://localhost:8000/api/currencies';
+export const FXRatesSourceURL = 'https://api.exchangeratesapi.io/latest';

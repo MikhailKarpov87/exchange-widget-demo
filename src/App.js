@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
 import RatesLoader from './api/ratesLoader';
-import { currencies, defaultPocketValue } from './commons/constants';
+import { currencies, defaultPocketValue, defaultRatesLoadingInterval } from './commons/constants';
 import { createCurrenciesSelectList, isValidValue, pocketHasEnoughtFunds, removeLeadingZero } from './commons/helpers';
 import CurrencyPanel from './components/CurrencyPanel';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,7 +32,7 @@ class App extends Component {
   componentDidMount() {
     const { baseCurrency } = this.state;
 
-    this.ratesLoader = new RatesLoader({ updateInterval: 5000 });
+    this.ratesLoader = new RatesLoader({ updateInterval: defaultRatesLoadingInterval });
     this.subscribeForRates(baseCurrency);
   }
 
