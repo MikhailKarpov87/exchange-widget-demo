@@ -48,6 +48,8 @@ const withCurrencySelect = ChildComponent =>
       return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <SideButton
+            id='previous-currency'
+            data-testid='previous-currency'
             style={{ alignSelf: 'stretch' }}
             onClick={() => handleSelectCurrency(currencyType, prevCurrencyName)}
             disabled={!prevCurrencyName}
@@ -58,6 +60,8 @@ const withCurrencySelect = ChildComponent =>
           <ChildComponent {...this.props} currency={currency} />
 
           <SideButton
+            id='next-currency'
+            data-testid='next-currency'
             style={{ alignSelf: 'stretch' }}
             onClick={() => handleSelectCurrency(currencyType, nextCurrencyName)}
             disabled={!nextCurrencyName}

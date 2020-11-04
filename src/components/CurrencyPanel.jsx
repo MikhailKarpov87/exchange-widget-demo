@@ -14,18 +14,23 @@ const CurrencyPanel = props => {
     handleValueChange,
     currencyRateText,
     classes,
+    handleFocus,
+    handleBlur,
   } = props;
 
   return (
     <div>
       <FormControl variant='outlined'>
-        <InputLabel htmlFor='currency-input' className={classes.inputLabel}>
+        <InputLabel htmlFor={`${currencyType}-input`} className={classes.inputLabel}>
           {name}
         </InputLabel>
         <InputComponent
-          id='currency-input'
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          id={`${currencyType}-input`}
+          data-testid={`${currencyType}-input`}
           value={value || ''}
-          onChange={e => handleValueChange(currencyType, e.target.value)}
+          onChange={e => handleValueChange(e.target.value)}
           startAdornment={<InputAdornment position='start'>{currencyType === 'baseCurrency' ? '-' : '+'} </InputAdornment>}
           endAdornment={<InputAdornment position='end'>{symbol}</InputAdornment>}
           labelWidth={30}
@@ -33,8 +38,8 @@ const CurrencyPanel = props => {
       </FormControl>
 
       <div className={classes.panelText}>
-        <span>You have {`${symbol}${pocketValue}`}</span>
-        <span>{currencyRateText}</span>
+        <span data-testid='pocket-text'>You have {`${symbol}${pocketValue}`}</span>
+        <span data-testid='inverse-rate-text'>{currencyRateText}</span>
       </div>
     </div>
   );

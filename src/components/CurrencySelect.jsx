@@ -11,9 +11,16 @@ const CurrencySelect = props => {
   return (
     <div className={classes.selectContainer}>
       <FormControl variant='outlined'>
-        <SelectComponent id='currency-select' value={value} onChange={e => handleSelectCurrency('quoteCurrency', e.target.value)}>
+        <SelectComponent
+          id='currency-select'
+          data-testid='currency-select'
+          value={value}
+          onChange={e => handleSelectCurrency('quoteCurrency', e.target.value)}
+        >
           {options.map(({ id, name }) => (
-            <MenuItem value={id}>{name}</MenuItem>
+            <MenuItem value={id} key={id}>
+              {name}
+            </MenuItem>
           ))}
         </SelectComponent>
       </FormControl>

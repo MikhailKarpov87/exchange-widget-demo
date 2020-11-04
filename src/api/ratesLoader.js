@@ -39,14 +39,14 @@ class RatesLoader {
   };
 
   _getRates = async () => {
+    let response;
     try {
-      const response = await axios.get(`${FXRatesSourceURL}?base=${this.baseCurrency}`);
-      return this.responseHasRates(response) ? response.data.rates : new Error(this.errorMessage);
+      response = await axios.get(`${FXRatesSourceURL}?base=${this.baseCurrency}`);
     } catch (error) {
       toast.error(this.errorMessage);
       clearInterval(this.intervalId);
-      throw new Error(this.errorMessage);
     }
+    return this.responseHasRates(response) ? response.data.rates : new Error(this.errorMessage);
   };
 }
 

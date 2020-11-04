@@ -10,6 +10,7 @@ import CurrencySelect from './components/CurrencySelect';
 import { withStyles } from '@material-ui/styles';
 import appStyles from './styles/app';
 import ExchangeButton from './components/ExchangeButton';
+import { ToastContainer } from 'react-toastify';
 
 const CurrencyPanelWithSelect = withCurrencySelect(CurrencyPanel);
 
@@ -22,6 +23,7 @@ class App extends Component {
   state = {
     baseCurrency: currencies[0],
     quoteCurrency: currencies[1],
+    selectedCurrencyType: 'baseCurrency',
     pockets,
     exchangeValues: { baseCurrency: '', quoteCurrency: '' },
     rates: {},
@@ -30,7 +32,7 @@ class App extends Component {
   componentDidMount() {
     const { baseCurrency } = this.state;
 
-    this.ratesLoader = new RatesLoader({ updateInterval: 10000 });
+    this.ratesLoader = new RatesLoader({ updateInterval: 5000 });
     this.subscribeForRates(baseCurrency);
   }
 
@@ -41,37 +43,48 @@ class App extends Component {
   subscribeForRates = baseCurrency => {
     this.ratesLoader && this.ratesLoader.unsubscribe();
     this.ratesLoader.subscribe(baseCurrency.name, updatedRates => {
-      const { quoteCurrency, exchangeValues } = this.state;
-      const quoteCurrencyRate = updatedRates[quoteCurrency.name];
-      const updatedQuoteCurrencyValue = exchangeValues.baseCurrency
-        ? (Number(exchangeValues.baseCurrency) * quoteCurrencyRate).toFixed(2)
-        : '';
-      this.setState({ rates: updatedRates, exchangeValues: { ...exchangeValues, quoteCurrency: updatedQuoteCurrencyValue } });
+      const { exchangeValues } = this.state;
+
+      this.setState({
+        rates: updatedRates,
+        exchangeValues: this.calcExchangeValues(updatedRates, exchangeValues),
+      });
     });
   };
 
-  handleValueChange = (currencyType, newValue) => {
-    const { quoteCurrency, rates } = this.state;
+  calcExchangeValues = (rates, values) => {
+    const { quoteCurrency, selectedCurrencyType } = this.state;
+
+    if (values[selectedCurrencyType] === '') {
+      return { baseCurrency: '', quoteCurrency: '' };
+    }
+
+    const quoteCurrencyRate = rates[quoteCurrency.name];
+    const isBaseCurrencySelected = selectedCurrencyType === 'baseCurrency';
+
+    const quoteCurrencyValue = isBaseCurrencySelected
+      ? (Number(values.baseCurrency) * quoteCurrencyRate).toFixed(2)
+      : values.quoteCurrency;
+
+    const baseCurrencyValue = isBaseCurrencySelected
+      ? values.baseCurrency
+      : (Number(values.quoteCurrency) / quoteCurrencyRate).toFixed(2);
+
+    return { baseCurrency: baseCurrencyValue, quoteCurrency: quoteCurrencyValue };
+  };
+
+  handleValueChange = newValue => {
+    const { rates, selectedCurrencyType, exchangeValues } = this.state;
 
     if (!isValidValue(newValue)) {
       return;
     }
 
-    if (newValue === '') {
-      this.clearValues();
-      return;
-    }
-
     const value = removeLeadingZero(newValue);
-    const quoteCurrencyRate = rates[quoteCurrency.name];
+    const values = { ...exchangeValues, [selectedCurrencyType]: value };
+    const updatedValues = this.calcExchangeValues(rates, values);
 
-    if (currencyType === 'baseCurrency') {
-      const quoteCurrencyValue = Number(value) * quoteCurrencyRate;
-      this.setState({ exchangeValues: { baseCurrency: value, quoteCurrency: quoteCurrencyValue.toFixed(2) } });
-    } else {
-      const baseCurrencyValue = Number(value) * (1 / quoteCurrencyRate);
-      this.setState({ exchangeValues: { baseCurrency: baseCurrencyValue.toFixed(2), quoteCurrency: value } });
-    }
+    this.setState({ exchangeValues: updatedValues });
   };
 
   clearValues() {
@@ -107,12 +120,25 @@ class App extends Component {
   };
 
   handleSelectCurrency = (currencyType, currencyName) => {
-    const selectedCurrency = currencies.find(({ name }) => currencyName === name);
+    const { rates, exchangeValues } = this.state;
+
+    const actualCurrency = currencies.find(({ name }) => currencyName === name);
     if (currencyType === 'baseCurrency') {
-      this.subscribeForRates(selectedCurrency);
+      this.subscribeForRates(actualCurrency);
     }
 
-    this.setState({ [currencyType]: selectedCurrency }, () => this.handleValueChange(currencyType, this.state[currencyType]));
+    this.setState({ [currencyType]: actualCurrency }, () => {
+      const updatedExchangeValues = this.calcExchangeValues(rates, exchangeValues);
+      this.setState({ exchangeValues: updatedExchangeValues });
+    });
+  };
+
+  handleFocus = () => {
+    this.setState({ selectedCurrencyType: 'quoteCurrency' });
+  };
+
+  handleBlur = () => {
+    this.setState({ selectedCurrencyType: 'baseCurrency' });
   };
 
   render() {
@@ -152,11 +178,14 @@ class App extends Component {
             handleValueChange={this.handleValueChange}
             handleSelectCurrency={this.handleSelectCurrency}
             currencyRateText={this.createInverseExchangeRateText()}
+            handleFocus={this.handleFocus}
+            handleBlur={this.handleBlur}
           />
         </div>
         <div className={classes.buttonContainer}>
           <ExchangeButton handleButtonClick={this.makeExchange} />
         </div>
+        <ToastContainer position='top-center' autoClose={5000} hideProgressBar={true} closeOnClick pauseOnHover />
       </div>
     );
   }
