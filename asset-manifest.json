@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/exchange-widget-demo/static/css/main.33c650e6.chunk.css",
+    "main.js": "/exchange-widget-demo/static/js/main.3fb5a838.chunk.js",
+    "main.js.map": "/exchange-widget-demo/static/js/main.3fb5a838.chunk.js.map",
+    "runtime-main.js": "/exchange-widget-demo/static/js/runtime-main.1aa82165.js",
+    "runtime-main.js.map": "/exchange-widget-demo/static/js/runtime-main.1aa82165.js.map",
+    "static/css/2.ccc6f86f.chunk.css": "/exchange-widget-demo/static/css/2.ccc6f86f.chunk.css",
+    "static/js/2.b8660d80.chunk.js": "/exchange-widget-demo/static/js/2.b8660d80.chunk.js",
+    "static/js/2.b8660d80.chunk.js.map": "/exchange-widget-demo/static/js/2.b8660d80.chunk.js.map",
+    "index.html": "/exchange-widget-demo/index.html",
+    "static/css/2.ccc6f86f.chunk.css.map": "/exchange-widget-demo/static/css/2.ccc6f86f.chunk.css.map",
+    "static/css/main.33c650e6.chunk.css.map": "/exchange-widget-demo/static/css/main.33c650e6.chunk.css.map",
+    "static/js/2.b8660d80.chunk.js.LICENSE.txt": "/exchange-widget-demo/static/js/2.b8660d80.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1aa82165.js",
+    "static/css/2.ccc6f86f.chunk.css",
+    "static/js/2.b8660d80.chunk.js",
+    "static/css/main.33c650e6.chunk.css",
+    "static/js/main.3fb5a838.chunk.js"
+  ]
+}
