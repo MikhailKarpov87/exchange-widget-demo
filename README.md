@@ -1,5 +1,5 @@
-# Getting Started with Create React App
+# Exchange Widget
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[**Demo**](https://mikhailkarpov87.github.io/exchange-widget-demo/)
 
-FX Rates Source: [api.exchangeratesapi.io](https://api.exchangeratesapi.io)
+FX Rates Source: [exchangeratesapi.io](https://exchangeratesapi.io)
